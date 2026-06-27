@@ -1,0 +1,4 @@
+[
+  { "id": "n1", "type": "critical", "message": "Sector 9 Water Main Break active", "time": "2h ago" },
+  { "id": "n2", "type": "warning", "message": "Substation A4 thermal spike detected", "time": "5h ago" }
+]

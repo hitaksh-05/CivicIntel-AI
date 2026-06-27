@@ -1,0 +1,62 @@
+[
+  {
+    "id": "s1",
+    "name": "Public Safety",
+    "health": 98.2,
+    "status": "Optimal",
+    "category": "Safety",
+    "openIncidents": 0,
+    "completedIncidents": 14,
+    "avgRepairTime": "12m",
+    "workload": "Low",
+    "performance": 98.2
+  },
+  {
+    "id": "s2",
+    "name": "Transportation",
+    "health": 88.5,
+    "status": "Active Sync",
+    "category": "Transit",
+    "openIncidents": 2,
+    "completedIncidents": 34,
+    "avgRepairTime": "35m",
+    "workload": "Moderate",
+    "performance": 88.5
+  },
+  {
+    "id": "s3",
+    "name": "Utility Management",
+    "health": 74.2,
+    "status": "Action Required",
+    "category": "Energy",
+    "openIncidents": 3,
+    "completedIncidents": 22,
+    "avgRepairTime": "52m",
+    "workload": "High",
+    "performance": 74.2
+  },
+  {
+    "id": "s4",
+    "name": "Environment",
+    "health": 96.0,
+    "status": "In Compliance",
+    "category": "Water",
+    "openIncidents": 1,
+    "completedIncidents": 19,
+    "avgRepairTime": "28m",
+    "workload": "Low",
+    "performance": 96.0
+  },
+  {
+    "id": "s5",
+    "name": "Comms Network",
+    "health": 100.0,
+    "status": "Optimal",
+    "category": "Comms",
+    "openIncidents": 1,
+    "completedIncidents": 45,
+    "avgRepairTime": "8m",
+    "workload": "Low",
+    "performance": 100.0
+  }
+]

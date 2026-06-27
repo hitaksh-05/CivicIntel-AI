@@ -1,0 +1,47 @@
+{
+  "predictiveBarData": [
+    { "sector": "Sector 1", "currentLoad": 82, "failureProb": 12 },
+    { "sector": "Sector 3", "currentLoad": 64, "failureProb": 8 },
+    { "sector": "Sector 4", "currentLoad": 91, "failureProb": 45 },
+    { "sector": "Sector 7", "currentLoad": 88, "failureProb": 65 },
+    { "sector": "Sector 9", "currentLoad": 98, "failureProb": 88 }
+  ],
+  "subsystemRadarData": [
+    { "subject": "Power Grid", "A": 120, "B": 110, "fullMark": 150 },
+    { "subject": "Water Main", "A": 98, "B": 130, "fullMark": 150 },
+    { "subject": "Transit Flow", "A": 86, "B": 130, "fullMark": 150 },
+    { "subject": "Structural", "A": 99, "B": 100, "fullMark": 150 },
+    { "subject": "Comms Net", "A": 140, "B": 90, "fullMark": 150 },
+    { "subject": "Public Safety", "A": 135, "B": 85, "fullMark": 150 }
+  ],
+  "maintenanceRecommendations": [
+    { "id": "mt1", "assetName": "Relay Module TR-404", "code": "T-minus 4h", "timeRemaining": "4.2 hours", "urgency": "urgent" },
+    { "id": "mt2", "assetName": "Water Pump P-92", "code": "T-minus 18h", "timeRemaining": "18 hours", "urgency": "normal" },
+    { "id": "mt3", "assetName": "Comm Satellite S-12", "code": "T-minus 1h", "timeRemaining": "55 mins", "urgency": "critical" }
+  ],
+  "risks": [
+    {
+      "id": "risk1",
+      "title": "District 4 Detour Congestion Gridlock",
+      "badge": "⚠️ DETOUR CONGESTION CASCADING RISK",
+      "description": "The emergency lane closures around Sector 9 water main break (#CIV-88341) will displace 1,400+ vehicles/hour onto Avenue 5. This triggers an 85% probability of severe gridlock between 16:00 and 18:30 EST.",
+      "severity": "HIGH",
+      "prob": 85,
+      "recommendation": "Deploy Automated Signal Reroute Timing"
+    },
+    {
+      "id": "risk2",
+      "title": "Sector 7G Overpass Thermal Expansion",
+      "badge": "🔍 STRUCTURAL FATIGUE WINDOW",
+      "description": "Cyclic temperature swings have increased micro-fissure variance along steel support pylon STR-BRG-4011-B by 14%. Unless heavy freight payload is redirected within 48h, ultrasonic weld integrity will breach safety limits.",
+      "severity": "CRITICAL",
+      "prob": 65,
+      "recommendation": "Dispatch Ultrasonic Weld Reinforcement Unit"
+    }
+  ],
+  "budgetEstimations": {
+    "recommendedMaintenance": 124000,
+    "emergencyMitigation": 450000,
+    "structuralShoring": 180000
+  }
+}

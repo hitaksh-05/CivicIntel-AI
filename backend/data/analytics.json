@@ -1,0 +1,31 @@
+{
+  "kpis": [
+    { "label": "Power Grid Load", "value": "412.8", "unit": "MW", "status": "normal", "change": "Stable · Trending Down" },
+    { "label": "Water PSI Level", "value": "74.2", "unit": "PSI", "status": "warning", "change": "Nominal · High Pressure" },
+    { "label": "Traffic Flow Rate", "value": "88.5", "unit": "k/h", "status": "normal", "change": "Efficient · Open Lanes" }
+  ],
+  "predictiveTelemetry": [
+    { "time": "00:00", "power": 320, "water": 65, "congestion": 12 },
+    { "time": "04:00", "power": 290, "water": 58, "congestion": 8 },
+    { "time": "08:00", "power": 440, "water": 82, "congestion": 85 },
+    { "time": "12:00", "power": 412, "water": 74, "congestion": 54 },
+    { "time": "16:00", "power": 480, "water": 89, "congestion": 92 },
+    { "time": "20:00", "power": 390, "water": 71, "congestion": 40 }
+  ],
+  "monthlyTrends": [
+    { "month": "Jan", "incidents": 18, "resolved": 16 },
+    { "month": "Feb", "incidents": 22, "resolved": 20 },
+    { "month": "Mar", "incidents": 15, "resolved": 15 },
+    { "month": "Apr", "incidents": 30, "resolved": 25 },
+    { "month": "May", "incidents": 25, "resolved": 24 },
+    { "month": "Jun", "incidents": 35, "resolved": 31 }
+  ],
+  "riskDistribution": {
+    "structural": 14,
+    "electrical": 22,
+    "hydraulic": 45,
+    "comms": 8,
+    "safety": 11
+  },
+  "infrastructureScore": 92
+}

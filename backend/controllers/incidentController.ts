@@ -47,8 +47,14 @@ export class IncidentController {
       }
       res.json(updated);
     } catch (error: any) {
-      console.error("IncidentController.updateIncident Error:", error);
-      res.status(500).json({ error: "Failed to update incident" });
+      console.error("========== SUPABASE ERROR ==========");
+      console.error(error);
+      console.error("====================================");
+      res.status(500).json({
+  error: error.message,
+  details: error,
+});
+      
     }
   }
 

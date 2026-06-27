@@ -1,17 +1,26 @@
 import { Incident } from "../types";
-import { readJSON, writeJSON } from "../utils/jsonHelper";
 import { normalizeIncidentData } from "../utils/incidentLifecycle";
+import { supabase } from "../supabase";
 
 export class IncidentService {
-  private static FILE_NAME = "incidents.json";
-
   static async getAllIncidents(): Promise<Incident[]> {
-    return await readJSON<Incident[]>(this.FILE_NAME);
+    const { data, error } = await supabase
+      .from("incidents")
+      .select("*");
+
+    if (error) throw error;
+    return data as Incident[] || [];
   }
 
   static async getIncidentById(id: string): Promise<Incident | null> {
-    const incidents = await this.getAllIncidents();
-    return incidents.find(i => i.id === id) || null;
+    const { data, error } = await supabase
+      .from("incidents")
+      .select("*")
+      .eq("id", id)
+      .single();
+
+    if (error && error.code !== "PGRST116") throw error;
+    return (data as Incident) || null;
   }
 
   static async createIncident(data: Partial<Incident>): Promise<Incident> {
@@ -59,9 +68,45 @@ export class IncidentService {
         coords: data.coords || existingIncident.coords,
         kanbanStatus: normalized.kanbanStatus || existingIncident.kanbanStatus
       } as Incident;
-      const idx = incidents.findIndex((incident) => incident.id === existingIncident.id);
-      incidents[idx] = updatedIncident;
-      await writeJSON(this.FILE_NAME, incidents);
+
+      const dbIncident = {
+        id: updatedIncident.id,
+        title: updatedIncident.title,
+        category: updatedIncident.category,
+        department: updatedIncident.department,
+        severity: updatedIncident.severity,
+        priority: updatedIncident.priority,
+        status: updatedIncident.status,
+        description: updatedIncident.description,
+        location: updatedIncident.location,
+        address: updatedIncident.address,
+        latitude: updatedIncident.latitude,
+        longitude: updatedIncident.longitude,
+        ticketid: updatedIncident.ticketId,
+        ticketnumber: updatedIncident.ticketNumber,
+        assignee: updatedIncident.assignee,
+        kanbanstatus: updatedIncident.kanbanStatus,
+        timelogged: updatedIncident.timeLogged,
+        aiscore: updatedIncident.aiScore,
+        completionpercent: updatedIncident.completionPercent,
+        progress: updatedIncident.progress,
+        currentstage: updatedIncident.currentStage,
+        affectedunits: updatedIncident.affectedUnits,
+        pressureloss: updatedIncident.pressureLoss,
+        unitenroute: updatedIncident.unitEnRoute,
+        imagedata: updatedIncident.imageData,
+        imagepath: updatedIncident.imagePath,
+        aifindings: updatedIncident.aiFindings,
+        generatedat: updatedIncident.generatedAt,
+        reportkey: updatedIncident.reportKey
+      };
+
+      const { error: updateError } = await supabase
+        .from("incidents")
+        .update(dbIncident)
+        .eq("id", existingIncident.id);
+
+      if (updateError) throw updateError;
       return updatedIncident;
     }
     
@@ -113,15 +158,49 @@ export class IncidentService {
       reportKey
     };
 
-    incidents.push(newIncident);
-    await writeJSON(this.FILE_NAME, incidents);
+    const dbIncident = {
+      id: newIncident.id,
+      title: newIncident.title,
+      category: newIncident.category,
+      department: newIncident.department,
+      severity: newIncident.severity,
+      priority: newIncident.priority,
+      status: newIncident.status,
+      description: newIncident.description,
+      location: newIncident.location,
+      address: newIncident.address,
+      latitude: newIncident.latitude,
+      longitude: newIncident.longitude,
+      ticketid: newIncident.ticketId,
+      ticketnumber: newIncident.ticketNumber,
+      assignee: newIncident.assignee,
+      kanbanstatus: newIncident.kanbanStatus,
+      timelogged: newIncident.timeLogged,
+      aiscore: newIncident.aiScore,
+      completionpercent: newIncident.completionPercent,
+      progress: newIncident.progress,
+      currentstage: newIncident.currentStage,
+      affectedunits: newIncident.affectedUnits,
+      pressureloss: newIncident.pressureLoss,
+      unitenroute: newIncident.unitEnRoute,
+      imagedata: newIncident.imageData,
+      imagepath: newIncident.imagePath,
+      aifindings: newIncident.aiFindings,
+      generatedat: newIncident.generatedAt,
+      reportkey: newIncident.reportKey
+    };
+
+    const { error: insertError } = await supabase
+      .from("incidents")
+      .insert([dbIncident]);
+
+    if (insertError) throw insertError;
     return newIncident;
   }
 
   static async updateIncident(id: string, updates: Partial<Incident>): Promise<Incident | null> {
-    const incidents = await this.getAllIncidents();
-    const idx = incidents.findIndex(i => i.id === id);
-    if (idx === -1) return null;
+    const incident = await this.getIncidentById(id);
+    if (!incident) return null;
 
     const normalized = normalizeIncidentData({
       department: updates.department,
@@ -137,75 +216,183 @@ export class IncidentService {
     });
 
     const updated = {
-      ...incidents[idx],
+      ...incident,
       ...updates,
-      department: normalized.department || updates.department || incidents[idx].department,
-      severity: updates.severity ? normalized.severity : incidents[idx].severity,
-      priority: updates.priority ? normalized.priority : updates.severity ? normalized.priority : incidents[idx].priority,
-      status: updates.status ? normalized.status : incidents[idx].status,
-      kanbanStatus: updates.kanbanStatus ? normalized.kanbanStatus : updates.status ? normalized.kanbanStatus : incidents[idx].kanbanStatus,
-      progress: updates.progress ? normalized.progress : incidents[idx].progress,
-      completionPercent: updates.completionPercent !== undefined ? normalized.completionPercent : incidents[idx].completionPercent,
-      currentStage: updates.currentStage ? normalized.currentStage : incidents[idx].currentStage
+      department: normalized.department || updates.department || incident.department,
+      severity: updates.severity ? normalized.severity : incident.severity,
+      priority: updates.priority ? normalized.priority : updates.severity ? normalized.priority : incident.priority,
+      status: updates.status ? normalized.status : incident.status,
+      kanbanStatus: updates.kanbanStatus ? normalized.kanbanStatus : updates.status ? normalized.kanbanStatus : incident.kanbanStatus,
+      progress: updates.progress ? normalized.progress : incident.progress,
+      completionPercent: updates.completionPercent !== undefined ? normalized.completionPercent : incident.completionPercent,
+      currentStage: updates.currentStage ? normalized.currentStage : incident.currentStage
     };
-    incidents[idx] = updated;
 
-    await writeJSON(this.FILE_NAME, incidents);
+    const dbIncident = {
+      id: updated.id,
+      title: updated.title,
+      category: updated.category,
+      department: updated.department,
+      severity: updated.severity,
+      priority: updated.priority,
+      status: updated.status,
+      description: updated.description,
+      location: updated.location,
+      address: updated.address,
+      latitude: updated.latitude,
+      longitude: updated.longitude,
+      ticketid: updated.ticketId,
+      ticketnumber: updated.ticketNumber,
+      assignee: updated.assignee,
+      kanbanstatus: updated.kanbanStatus,
+      timelogged: updated.timeLogged,
+      aiscore: updated.aiScore,
+      completionpercent: updated.completionPercent,
+      progress: updated.progress,
+      currentstage: updated.currentStage,
+      affectedunits: updated.affectedUnits,
+      pressureloss: updated.pressureLoss,
+      unitenroute: updated.unitEnRoute,
+      imagedata: updated.imageData,
+      imagepath: updated.imagePath,
+      aifindings: updated.aiFindings,
+      generatedat: updated.generatedAt,
+      reportkey: updated.reportKey
+    };
+
+    const { error } = await supabase
+      .from("incidents")
+      .update(dbIncident)
+      .eq("id", id);
+
+    if (error) throw error;
     return updated;
   }
 
   static async updateIncidentStatus(id: string, status: Incident["status"] | Incident["kanbanStatus"]): Promise<Incident | null> {
-    const incidents = await this.getAllIncidents();
-    const idx = incidents.findIndex(i => i.id === id);
-    if (idx === -1) return null;
+    const incident = await this.getIncidentById(id);
+    if (!incident) return null;
 
-    const incident = incidents[idx];
     const normalized = normalizeIncidentData({ status, kanbanStatus: ["todo", "in_progress", "review", "completed"].includes(status as string) ? status as string : undefined });
 
+    const updated = { ...incident };
+
     if (["todo", "in_progress", "review", "completed"].includes(status as string)) {
-      incident.kanbanStatus = normalized.kanbanStatus as Incident["kanbanStatus"];
-      incident.status = normalized.status;
-      incident.progress = normalized.progress;
-      incident.currentStage = normalized.currentStage;
-      incident.completionPercent = normalized.completionPercent;
+      updated.kanbanStatus = normalized.kanbanStatus as Incident["kanbanStatus"];
+      updated.status = normalized.status;
+      updated.progress = normalized.progress;
+      updated.currentStage = normalized.currentStage;
+      updated.completionPercent = normalized.completionPercent;
     } else {
-      incident.status = normalized.status;
-      incident.kanbanStatus = normalized.kanbanStatus as Incident["kanbanStatus"];
-      incident.progress = normalized.progress;
-      incident.currentStage = normalized.currentStage;
-      incident.completionPercent = normalized.completionPercent;
+      updated.status = normalized.status;
+      updated.kanbanStatus = normalized.kanbanStatus as Incident["kanbanStatus"];
+      updated.progress = normalized.progress;
+      updated.currentStage = normalized.currentStage;
+      updated.completionPercent = normalized.completionPercent;
     }
 
-    incidents[idx] = incident;
-    await writeJSON(this.FILE_NAME, incidents);
-    return incident;
+    const dbIncident = {
+      id: updated.id,
+      title: updated.title,
+      category: updated.category,
+      department: updated.department,
+      severity: updated.severity,
+      priority: updated.priority,
+      status: updated.status,
+      description: updated.description,
+      location: updated.location,
+      address: updated.address,
+      latitude: updated.latitude,
+      longitude: updated.longitude,
+      ticketid: updated.ticketId,
+      ticketnumber: updated.ticketNumber,
+      assignee: updated.assignee,
+      kanbanstatus: updated.kanbanStatus,
+      timelogged: updated.timeLogged,
+      aiscore: updated.aiScore,
+      completionpercent: updated.completionPercent,
+      progress: updated.progress,
+      currentstage: updated.currentStage,
+      affectedunits: updated.affectedUnits,
+      pressureloss: updated.pressureLoss,
+      unitenroute: updated.unitEnRoute,
+      imagedata: updated.imageData,
+      imagepath: updated.imagePath,
+      aifindings: updated.aiFindings,
+      generatedat: updated.generatedAt,
+      reportkey: updated.reportKey
+    };
+
+    const { error } = await supabase
+      .from("incidents")
+      .update(dbIncident)
+      .eq("id", id);
+
+    if (error) throw error;
+    return updated;
   }
 
   static async updateIncidentProgress(
     id: string,
     progressData: { assignee?: string; progress?: string; completionPercent?: number; currentStage?: string }
   ): Promise<Incident | null> {
-    const incidents = await this.getAllIncidents();
-    const idx = incidents.findIndex(i => i.id === id);
-    if (idx === -1) return null;
+    const incident = await this.getIncidentById(id);
+    if (!incident) return null;
 
-    const incident = incidents[idx];
-    if (progressData.assignee !== undefined) incident.assignee = progressData.assignee;
-    if (progressData.progress !== undefined) incident.progress = progressData.progress;
-    if (progressData.completionPercent !== undefined) incident.completionPercent = progressData.completionPercent;
-    if (progressData.currentStage !== undefined) incident.currentStage = progressData.currentStage;
+    const updated = { ...incident };
+    if (progressData.assignee !== undefined) updated.assignee = progressData.assignee;
+    if (progressData.progress !== undefined) updated.progress = progressData.progress;
+    if (progressData.completionPercent !== undefined) updated.completionPercent = progressData.completionPercent;
+    if (progressData.currentStage !== undefined) updated.currentStage = progressData.currentStage;
 
-    incidents[idx] = incident;
-    await writeJSON(this.FILE_NAME, incidents);
-    return incident;
+    const dbIncident = {
+      id: updated.id,
+      title: updated.title,
+      category: updated.category,
+      department: updated.department,
+      severity: updated.severity,
+      priority: updated.priority,
+      status: updated.status,
+      description: updated.description,
+      location: updated.location,
+      address: updated.address,
+      latitude: updated.latitude,
+      longitude: updated.longitude,
+      ticketid: updated.ticketId,
+      ticketnumber: updated.ticketNumber,
+      assignee: updated.assignee,
+      kanbanstatus: updated.kanbanStatus,
+      timelogged: updated.timeLogged,
+      aiscore: updated.aiScore,
+      completionpercent: updated.completionPercent,
+      progress: updated.progress,
+      currentstage: updated.currentStage,
+      affectedunits: updated.affectedUnits,
+      pressureloss: updated.pressureLoss,
+      unitenroute: updated.unitEnRoute,
+      imagedata: updated.imageData,
+      imagepath: updated.imagePath,
+      aifindings: updated.aiFindings,
+      generatedat: updated.generatedAt,
+      reportkey: updated.reportKey
+    };
+
+    const { error } = await supabase
+      .from("incidents")
+      .update(dbIncident)
+      .eq("id", id);
+
+    if (error) throw error;
+    return updated;
   }
 
   static async deleteIncident(id: string): Promise<boolean> {
-    const incidents = await this.getAllIncidents();
-    const filtered = incidents.filter(i => i.id !== id);
-    if (filtered.length === incidents.length) return false;
+    const { error } = await supabase
+      .from("incidents")
+      .delete()
+      .eq("id", id);
 
-    await writeJSON(this.FILE_NAME, filtered);
+    if (error) return false;
     return true;
   }
 }

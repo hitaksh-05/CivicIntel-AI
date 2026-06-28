@@ -45,7 +45,7 @@ export const InsightsView: React.FC = () => {
     if (!confirmed) return;
 
     try {
-      const res = await fetch("/api/incidents");
+      const res = await fetch("https://civicintel-ai.onrender.com/api/incidents");
       if (!res.ok) throw new Error("API error");
       const incidents = await res.json();
       const targetIncident = incidents.find((incident: any) => {
@@ -71,11 +71,18 @@ export const InsightsView: React.FC = () => {
         timeline: [...(targetIncident.timeline || []), timelineEntry]
       };
 
-      const updateRes = await fetch(`/api/incidents/${targetIncident.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatePayload)
-      });
+      const API = "https://civicintel-ai.onrender.com";
+
+const updateRes = await fetch(
+  `${API}/api/incidents/${targetIncident.id}`,
+  {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(updatePayload),
+  }
+);
       if (!updateRes.ok) throw new Error("Failed to update incident");
 
       const updatedActions = [...executedActions, actionKey];

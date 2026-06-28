@@ -117,7 +117,7 @@ export const ReportView: React.FC = () => {
     setIsSubmitting(true);
     
     try {
-      const res = await fetch("/api/incidents", {
+      const res = await fetch("${API}/api/incidents", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

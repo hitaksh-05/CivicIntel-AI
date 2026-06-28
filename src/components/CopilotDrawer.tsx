@@ -60,7 +60,7 @@ export const CopilotDrawer: React.FC<CopilotDrawerProps> = ({ isOpen, onClose })
     window.setTimeout(() => setThinkingStage("Generating operational summary..."), 1300);
 
     try {
-      const res = await fetch("/api/ai-query", {
+      const res = await fetch("${API}/api/ai-query", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query: q, history: conversationHistory })

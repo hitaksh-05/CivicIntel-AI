@@ -18,7 +18,10 @@ export const IncidentProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const refreshIncidents = useCallback(async () => {
     try {
-      const res = await fetch("/api/incidents");
+      const API =
+  import.meta.env.VITE_API_URL || "https://civicintel-ai.onrender.com";
+
+const res = await fetch(`${API}/api/incidents`);
       if (!res.ok) throw new Error("Failed to load incidents");
       const data = await res.json();
       setIncidents(Array.isArray(data) ? data : []);

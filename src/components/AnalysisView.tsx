@@ -46,7 +46,9 @@ export const AnalysisView: React.FC = () => {
       const safeLocation = location.trim() || "Municipal asset";
       const safeDescription = description.trim() || "Routine inspection request from field operations.";
 
-      const res = await fetch("/api/analyze-incident", {
+      const API = "https://civicintel-ai.onrender.com";
+
+const res = await fetch(`${API}/api/analyze-incident`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ category: safeCategory, location: safeLocation, description: safeDescription, severity, imageData: selectedImage })
@@ -136,7 +138,7 @@ export const AnalysisView: React.FC = () => {
         aiScore: result.confidence || 90
       };
 
-      const res = await fetch("/api/incidents", {
+      const res = await fetch(`${API}/api/incidents`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(postBody)

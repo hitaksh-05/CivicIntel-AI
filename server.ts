@@ -6,15 +6,9 @@ import path from "path";
 import apiRoutes from "./backend/routes";
 
 const app = express();
-app.use(
-  cors({
-    origin: [
-      "https://civicintel-ai.vercel.app",
-      "http://localhost:3000",
-    ],
-    credentials: true,
-  })
-);
+app.use(cors());
+
+app.options("*", cors());
 const PORT = 3000;
 
 app.use(express.json({ limit: "50mb" }));

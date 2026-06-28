@@ -31,6 +31,9 @@ export const AnalysisView: React.FC = () => {
   const [isGeneratingWorkOrder, setIsGeneratingWorkOrder] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
+  const API =
+    import.meta.env.VITE_API_URL || "https://civicintel-ai.onrender.com";
+
   const sampleImages = [
     { label: "Sector 7 Bridge Crack", url: IMAGES.bridgeCrack, cat: "Structural", loc: "Sector 7G Overpass" },
     { label: "Substation Thermal Scan", url: IMAGES.bridgeWireframe, cat: "Electrical", loc: "Substation A4" },
@@ -46,7 +49,7 @@ export const AnalysisView: React.FC = () => {
       const safeLocation = location.trim() || "Municipal asset";
       const safeDescription = description.trim() || "Routine inspection request from field operations.";
 
-      const API = "https://civicintel-ai.onrender.com";
+      
 
 const res = await fetch(`${API}/api/analyze-incident`, {
         method: "POST",
